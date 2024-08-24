@@ -5,6 +5,9 @@ import { MdDelete, MdCheck, MdClose } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import Navbar from './components/Navbar.jsx'
+import Signup from './components/Signup.jsx'
+import Login from './components/Login.jsx'
 
 const App = () => {
   const [inputValue, setInputValue] = useState('');
@@ -13,12 +16,24 @@ const App = () => {
   const [showFinished, setShowFinished] = useState(true);
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [todos, setTodos] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:5000/todos')
       .then(response => setTodos(response.data))
       .catch(error => console.error('Error fetching todos:', error));
   }, []);
+
+  const toggleLogin = () => {
+    setShowLogin(!showLogin);
+    setShowSignup(false);
+  };
+
+  const toggleSignup = () => {
+    setShowSignup(!showSignup);
+    setShowLogin(false);
+  };
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -118,6 +133,23 @@ const App = () => {
         pauseOnHover
         theme="colored"
       />
+    <Navbar onLoginClick={toggleLogin} onSignupClick={toggleSignup} />
+
+    {showLogin && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-20 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-xl">
+          <Login onClose={() => setShowLogin(false)} />
+        </div>
+      </div>
+    )}
+    {showSignup && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-20 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-xl">
+          <Signup onClose={() => setShowSignup(false)} />
+        </div>
+      </div>
+    )}
+
 
       <div className="md:container mx-auto my-5 rounded-xl p-5 bg-violet-100 min-h-[80vh] md:w-1/2 shadow-lg">
         <h1 className="text-2xl font-bold mb-4">Stask - Manage Your Todos</h1>
